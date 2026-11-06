@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
 
 const NavAuth = () => {
     const router = useRouter();
     const { data: session, isPending } = authClient.useSession();
 
-    // লোড হওয়ার সময় জায়গা ধরে রাখে, যাতে লেআউট লাফ না দেয়
+
     if (isPending) return <div className="h-10 w-28" />;
 
     // লগইন নেই
@@ -28,7 +29,6 @@ const NavAuth = () => {
         );
     }
 
-    // লগইন আছে
     const { name, image } = session.user;
 
     const handleSignOut = async () => {
@@ -51,7 +51,14 @@ const NavAuth = () => {
                 className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-emerald-700"
             >
                 {image ? (
-                    <img src={image} alt={name} className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
+                    <Image
+                        src={image}
+                        alt={name || 'Profile picture'}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded-full object-cover"
+                        referrerPolicy="no-referrer"
+                    />
                 ) : (
                     <span className="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm font-bold">
                         {name?.charAt(0).toUpperCase()}

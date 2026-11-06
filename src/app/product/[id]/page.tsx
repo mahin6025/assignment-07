@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { cookies } from 'next/headers'; // <-- ১. cookies ইমপোর্ট করুন
-import { redirect } from 'next/navigation'; // <-- ২. redirect ইমপোর্ট করুন
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 interface Market {
     market: string;
@@ -69,7 +69,7 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
                     </div>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center w-full md:w-auto min-w-[150px]">
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center w-full md:w-auto min-w-37.5">
                     <p className="text-gray-500 text-sm mb-1">আজকের দাম</p>
                     <p className="text-3xl font-bold text-gray-800">{toBengaliNumber(product.today)}</p>
                     <p className="text-gray-500 text-sm mb-2">টাকা / কেজি</p>
@@ -82,7 +82,7 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
                 </div>
             </div>
 
-            {/* দামের সারসংক্ষেপ (Summary Cards) */}
+
             <div className="mb-6">
                 <h2 className="text-lg font-bold text-gray-800 mb-4">দামের সারসংক্ষেপ</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -104,7 +104,7 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
                 </div>
             </div>
 
-            {/* বাজারভিত্তিক আজকের দাম (Table) */}
+
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-100">
                     <h2 className="text-lg font-bold text-gray-800">বাজারভিত্তিক আজকের দাম</h2>
@@ -138,13 +138,12 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
     );
 }
 
-// ৩. মূল পেজ (এখানে async এবং কুকি চেক যুক্ত করা হলো)
+
 export default async function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     // কুকি থেকে সেশন টোকেন চেক করা হচ্ছে
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('better-auth.session_token'); // আপনার কুকির নাম অনুযায়ী পরিবর্তন করুন
+    const sessionToken = cookieStore.get('better-auth.session_token');
 
-    // যদি লগইন করা না থাকে, তবে সাইন-ইন পেজে রিডাইরেক্ট করবে
     if (!sessionToken) {
         redirect('/signin');
     }

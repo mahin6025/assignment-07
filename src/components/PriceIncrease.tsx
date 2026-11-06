@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-// ১. ডাটার জন্য সঠিক টাইপ ডিফাইন করুন
 interface Product {
     id: number;
     nameBn: string;
@@ -21,7 +20,7 @@ const toBengaliNumber = (num: number) => {
 };
 
 export default function PriceIncrease() {
-    // ২. any[] এর জায়গায় Product[] ব্যবহার করুন
+
     const [products, setProducts] = useState<Product[]>([]);
 
     useEffect(() => {
@@ -29,7 +28,7 @@ export default function PriceIncrease() {
             const res = await fetch('https://openapi.programming-hero.com/api/bazardor/products');
             const data = await res.json();
 
-            // ৩. filter-এ any এর জায়গায় Product ব্যবহার করুন
+
             const increased = data.filter((p: Product) => p.change.dir === 'up').slice(0, 6);
             setProducts(increased);
         };

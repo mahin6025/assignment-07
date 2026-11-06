@@ -16,7 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="bn" data-theme="light">
-      <body className="min-h-screen flex flex-col bg-emerald-50 text-slate-900">
+      <body
+        className={`${notoSerifBengali.className} min-h-screen flex flex-col bg-emerald-50 text-slate-900`}
+      >
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

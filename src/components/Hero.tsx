@@ -1,28 +1,23 @@
 'use client';
-import React, { useEffect, useState } from 'react'; // useEffect যুক্ত করুন
+import React, { useSyncExternalStore } from 'react';
 import Link from "next/link";
 import Image from "next/image";
+import TodayDate from './TodayDate';
+
+const subscribeToStorage = (onStoreChange: () => void) => {
+    window.addEventListener('storage', onStoreChange);
+    return () => window.removeEventListener('storage', onStoreChange);
+};
+
+const getIsLoggedIn = () => Boolean(window.localStorage.getItem('token'));
+const getServerIsLoggedIn = () => false;
 
 const Hero = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    // ১. তারিখের জন্য স্টেট (প্রথমে খালি থাকবে)
-    const [today, setToday] = useState("");
-
-    useEffect(() => {
-        // ২. লগইন চেক
-        const token = typeof window !== "undefined" ? localStorage.getItem('token') : null;
-        setIsLoggedIn(Boolean(token));
-
-        // ৩. ব্রাউজারে লোড হওয়ার পর তারিখ সেট করুন
-        const formattedDate = new Date().toLocaleDateString('bn-BD', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-        setToday(formattedDate);
-    }, []);
+    const isLoggedIn = useSyncExternalStore(
+        subscribeToStorage,
+        getIsLoggedIn,
+        getServerIsLoggedIn
+    );
 
     return (
         <div>
@@ -30,11 +25,11 @@ const Hero = () => {
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="card lg:card-side bg-white w-full shadow-sm rounded-3xl border border-emerald-100">
 
-                        {/* বাম দিকের কন্টেন্ট */}
+
                         <div className="card-body justify-center p-8 lg:p-10 flex-1">
-                            {/* ৪. today স্টেটটি এখানে ব্যবহার করুন */}
+
                             <span className="badge badge-lg bg-emerald-100 text-emerald-800 border-none font-semibold w-fit">
-                                {today || "লোড হচ্ছে..."}
+                                <TodayDate />
                             </span>
 
                             <h2 className="card-title text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">
@@ -56,11 +51,11 @@ const Hero = () => {
                             </div>
                         </div>
 
-                        {/* ডান দিকের অংশ */}
+
                         <div className="p-6 lg:p-8 flex flex-col justify-center w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-gray-100">
 
                             {isLoggedIn ? (
-                                // লগইন থাকলে: স্ট্যাটস কার্ড দেখাবে
+
                                 <div className="flex flex-col gap-3">
                                     <div className="flex justify-between items-center bg-emerald-50/50 rounded-xl p-4 border border-emerald-100">
                                         <div>
@@ -85,7 +80,7 @@ const Hero = () => {
                                     </div>
                                 </div>
                             ) : (
-                                // লগইন না থাকলে: ঝুড়ির ছবি দেখাবে
+
                                 <div className="flex items-center justify-center h-full w-full">
                                     <Image
                                         src="/assets/bazar-hero.png"

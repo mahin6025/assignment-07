@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
 
 export default function ProfilePage() {
@@ -60,9 +61,11 @@ export default function ProfilePage() {
                     <div className="flex items-center gap-4 min-w-0">
                         {image ? (
 
-                            <img
+                            <Image
                                 src={image}
                                 alt={session.user.name}
+                                width={64}
+                                height={64}
                                 className="w-16 h-16 rounded-xl object-cover"
                                 referrerPolicy="no-referrer"
                             />
