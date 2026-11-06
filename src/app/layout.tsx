@@ -1,27 +1,24 @@
-import type { Metadata } from "next";
+
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Marquee from "@/components/Marquee";
 import Footer from "@/components/Footer";
-import { Toaster } from "react-hot-toast";
+import { Noto_Serif_Bengali } from "next/font/google";
 
-export const metadata: Metadata = {
-  title: "বাজার দর — Bazar Dor",
-  description: "প্রয়োজনীয় পণ্যের দাম এক নজরে",
-};
+const notoSerifBengali = Noto_Serif_Bengali({
+  subsets: ["latin", "bengali"],
+  weight: "400",
+});
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="bn">
-      <body className="min-h-screen flex flex-col">
-        <Toaster position="top-right" />
+    <html lang="bn" data-theme="light">
+      <body className="min-h-screen flex flex-col bg-emerald-50 text-slate-900">
         <Navbar />
-        <Marquee />
-        <main className="flex-grow">{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

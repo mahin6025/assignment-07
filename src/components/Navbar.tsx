@@ -1,120 +1,64 @@
-"use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useSession, signOut } from "@/lib/auth-client";
-import toast from "react-hot-toast";
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import NavAuth from './NavAuth';
+import { getCategories } from '@/lib/api';
+import TodayDate from './TodayDate';
 
-interface Category {
-    _id: string;
-    name: string;
+type Category = {
+    id: string;
     slug: string;
-    icon?: string;
-}
+    nameBn: string;
+    icon: string;
+};
 
-export default function Navbar() {
-    const { data: session } = useSession();
-    const [categories, setCategories] = useState<Category[]>([]);
-    const pathname = usePathname();
-
-    // Get current Bangla date string representation
-    const banglaDate = new Date().toLocaleDateString("bn-BD", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
-
-    useEffect(() => {
-        fetch("https://openapi.programming-hero.com/api/bazardor/categories")
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.status && data.data) {
-                    setCategories(data.data);
-                }
-            })
-            .catch((err) => console.error("Error fetching categories:", err));
-    }, []);
-
-    const handleSignOut = async () => {
-        await signOut({
-            fetchOptions: {
-                onSuccess: () => {
-                    toast.success("Successfully signed out!");
-                },
-            },
-        });
-    };
+const Navbar = async () => {
+    const categories: Category[] = await getCategories();
 
     return (
-        <header className="bg-white shadow-sm sticky top-0 z-50">
-            {/* Row 1: Logo & Auth */}
-            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2">
-                    <span className="text-2xl">🛒</span>
-                    <div>
-                        <h1 className="text-xl font-bold text-emerald-800">বাজার দর</h1>
-                        <p className="text-xs text-slate-500">{banglaDate}</p>
+        <header className="w-full bg-white shadow-sm">
+            <div className="flex justify-between items-center max-w-7xl mx-auto px-4 py-3">
+                <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-emerald-700 rounded-xl flex items-center justify-center p-1 shadow-md">
+                        <Image
+                            src="/assets/logo-icon.png"
+                            alt="logo"
+                            width={26}
+                            height={26}
+                        />
                     </div>
-                </Link>
 
-                <div className="flex items-center gap-3">
-                    {session ? (
-                        <div className="flex items-center gap-3">
-                            <Link href="/profile" className="text-sm font-medium text-slate-700 hover:text-emerald-700">
-                                প্রোফাইল ({session.user.name})
-                            </Link>
-                            <button
-                                onClick={handleSignOut}
-                                className="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-red-100 transition"
-                            >
-                                সাইন আউট
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="flex items-center gap-2">
-                            <Link
-                                href="/signin"
-                                className="text-emerald-700 border border-emerald-600 px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-emerald-50 transition"
-                            >
-                                সাইন ইন
-                            </Link>
-                            <Link
-                                href="/signup"
-                                className="bg-emerald-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-emerald-800 transition"
-                            >
-                                সাইন আপ
-                            </Link>
-                        </div>
-                    )}
+                    <div className="flex flex-col">
+                        <span className="font-bold text-base leading-tight text-slate-900">বাজার দর</span>
+                        <span className="text-xs text-slate-600">
+                            <TodayDate />
+                        </span>
+                    </div>
                 </div>
+
+                <NavAuth />
             </div>
 
-            {/* Row 2: Category Navigation Links */}
-            <nav className="bg-slate-100 border-t border-slate-200 overflow-x-auto">
-                <div className="max-w-7xl mx-auto px-4 flex gap-2 py-2">
-                    <Link
-                        href="/"
-                        className={`px-3 py-1 rounded-md text-sm font-medium whitespace-nowrap transition ${pathname === "/" ? "bg-emerald-700 text-white" : "text-slate-700 hover:bg-slate-200"
-                            }`}
-                    >
-                        সব পণ্য
-                    </Link>
-                    {categories.map((cat) => {
-                        const isActive = pathname === `/category/${cat.slug}`;
-                        return (
+            <div className="w-full bg-emerald-50/50 border-t border-emerald-100">
+                <ul className="flex items-center gap-8 max-w-7xl mx-auto px-4 py-3 text-sm text-slate-800 list-none overflow-x-auto whitespace-nowrap">
+                    {categories.map((cat) => (
+                        <li key={cat.id}>
                             <Link
-                                key={cat._id || cat.slug}
                                 href={`/category/${cat.slug}`}
-                                className={`px-3 py-1 rounded-md text-sm font-medium whitespace-nowrap transition flex items-center gap-1 ${isActive ? "bg-emerald-700 text-white" : "text-slate-700 hover:bg-slate-200"
-                                    }`}
+                                className="flex items-center space-x-2 cursor-pointer hover:text-emerald-700 transition-colors"
                             >
-                                <span>{cat.icon || "📦"}</span>
-                                <span>{cat.name}</span>
+
+                                <span className="text-base leading-none">
+                                    {cat.icon ? cat.icon : (cat.slug === 'dal' ? '🫘' : '🛒')}
+                                </span>
+                                <span className="font-medium">{cat.nameBn}</span>
                             </Link>
-                        );
-                    })}
-                </div>
-            </nav>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </header>
     );
-}
+};
+
+export default Navbar;

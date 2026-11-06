@@ -1,48 +1,68 @@
-import Link from "next/link";
+export type Product = {
+    id: number;
+    slug: string;
+    nameBn: string;
+    image: string;
+    unit: string;
+    today: number;
+    change: { dir: 'up' | 'down' | 'flat'; pct: number };
+};
 
-interface ProductCardProps {
-    product: {
-        _id: string;
-        slug?: string;
-        name: string;
-        emoji?: string;
-        unit: string;
-        current_price: number;
-        change_percentage: number;
-    };
-}
+const unitBn: Record<string, string> = {
+    kg: 'কেজি',
+    litre: 'লিটার',
+    dozen: 'ডজন',
+    piece: 'পিস',
+};
 
-export default function ProductCard({ product }: ProductCardProps) {
-    const isUp = product.change_percentage > 0;
-    const isDown = product.change_percentage < 0;
+const toBn = (n: number) => n.toLocaleString('bn-BD');
+
+const ProductCard = ({ product }: { product: Product }) => {
+    const { dir, pct } = product.change;
+    const pctText = Math.abs(pct).toLocaleString('bn-BD', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+    });
+
+    const badge =
+        dir === 'up'
+            ? { cls: 'bg-red-50 text-red-600', text: `▲ ${pctText}%` }
+            : dir === 'down'
+                ? { cls: 'bg-green-50 text-green-600', text: `▼ ${pctText}%` }
+                : { cls: 'bg-slate-100 text-slate-600', text: `— ${pctText}%` };
 
     return (
-        <Link
-            href={`/product/${product.slug || product._id}`}
-            className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between"
-        >
-            <div>
-                <div className="text-4xl mb-3 text-center">{product.emoji || "🥬"}</div>
-                <h3 className="font-bold text-slate-800 text-lg mb-1 text-center">{product.name}</h3>
-                <p className="text-xs text-slate-500 text-center mb-4">প্রতি {product.unit}</p>
+        <div className="bg-white border border-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+
+            <div className="flex items-start gap-3">
+                <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-2xl shrink-0">
+                    {product.image}
+                </div>
+                <div className="min-w-0">
+                    <h3 className="font-bold text-slate-900 leading-tight truncate">
+                        {product.nameBn}
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                        প্রতি {unitBn[product.unit] ?? product.unit}
+                    </p>
+                </div>
             </div>
 
-            <div className="border-t border-slate-100 pt-3 flex items-center justify-between">
-                <div>
-                    <span className="text-xs text-slate-400 block">আজকের দাম</span>
-                    <span className="font-bold text-emerald-800 text-base">{product.current_price} টাকা</span>
+
+            <div className="mt-4">
+                <p className="text-xs text-slate-500">আজকের দাম</p>
+                <div className="flex items-center justify-between mt-0.5">
+                    <p className="text-slate-900">
+                        <span className="text-lg font-extrabold">{toBn(product.today)}</span>{' '}
+                        <span className="text-sm">টাকা</span>
+                    </p>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${badge.cls}`}>
+                        {badge.text}
+                    </span>
                 </div>
-                <span
-                    className={`text-xs font-semibold px-2 py-1 rounded-md ${isUp
-                            ? "bg-green-100 text-green-700"
-                            : isDown
-                                ? "bg-red-100 text-red-700"
-                                : "bg-slate-100 text-slate-600"
-                        }`}
-                >
-                    {isUp ? "▲" : isDown ? "▼" : "—"} {Math.abs(product.change_percentage)}%
-                </span>
             </div>
-        </Link>
+        </div>
     );
-}
+};
+
+export default ProductCard;

@@ -1,48 +1,56 @@
-"use client";
-import React, { useEffect, useState } from "react";
+'use client';
 
-interface Product {
-    _id: string;
-    name: string;
-    emoji?: string;
-    current_price: number;
-    unit: string;
-    change_percentage: number;
-}
+import MarqueeText from 'react-marquee-text';
 
-export default function Marquee() {
-    const [products, setProducts] = useState<Product[]>([]);
+import type { Product } from './PriceTicker';
 
-    useEffect(() => {
-        fetch("https://openapi.programming-hero.com/api/bazardor/products")
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.status && data.data) {
-                    setProducts(data.data);
-                }
-            })
-            .catch((err) => console.error("Error fetching ticker data:", err));
-    }, []);
 
-    if (products.length === 0) return null;
+const unitBn: Record<string, string> = {
+    kg: 'কেজি',
+    litre: 'লিটার',
+    dozen: 'ডজন',
+    piece: 'পিস',
+};
 
+const toBn = (n: number) => n.toLocaleString('bn-BD');
+
+const PriceMarquee = ({ products }: { products: Product[] }) => {
     return (
-        <div className="bg-emerald-800 text-white py-2 overflow-hidden whitespace-nowrap text-sm border-y border-emerald-700">
-            <div className="inline-block animate-marquee">
-                {products.map((item, idx) => {
-                    const isUp = item.change_percentage >= 0;
+        <div className="w-full bg-white border-y border-emerald-100 py-2.5 overflow-hidden">
+            <MarqueeText>
+                {products.map((p) => {
+                    const { dir, pct } = p.change;
+
                     return (
-                        <span key={idx} className="mx-6 inline-flex items-center gap-2">
-                            <span>{item.emoji || "🛒"}</span>
-                            <span className="font-medium">{item.name}</span>
-                            <span>{item.current_price} টাকা/{item.unit}</span>
-                            <span className={`text-xs font-bold px-1 rounded ${isUp ? "text-green-300" : "text-red-300"}`}>
-                                {isUp ? "▲" : "▼"} {Math.abs(item.change_percentage)}%
+                        <span
+                            key={p.id}
+                            className="inline-flex items-center gap-2 mx-6 text-sm text-slate-800 whitespace-nowrap"
+                        >
+                            <span className="text-base leading-none">{p.categoryIcon}</span>
+                            <span className="font-semibold">{p.nameBn}</span>
+                            <span className="text-slate-700">
+                                {toBn(p.today)} টাকা/{unitBn[p.unit] ?? p.unit}
                             </span>
+
+                            {dir === 'up' && (
+                                <span className="font-semibold text-red-600">
+                                    ▲ {toBn(Math.abs(pct))}%
+                                </span>
+                            )}
+                            {dir === 'down' && (
+                                <span className="font-semibold text-green-600">
+                                    ▼ {toBn(Math.abs(pct))}%
+                                </span>
+                            )}
+                            {dir === 'flat' && (
+                                <span className="font-semibold text-slate-400">— ০%</span>
+                            )}
                         </span>
                     );
                 })}
-            </div>
+            </MarqueeText>
         </div>
     );
-}
+};
+
+export default PriceMarquee;
