@@ -1,22 +1,20 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; // useEffect যুক্ত করুন
 import Link from "next/link";
 import Image from "next/image";
 
 const Hero = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // ১. তারিখের জন্য স্টেট (প্রথমে খালি থাকবে)
     const [today, setToday] = useState("");
 
     useEffect(() => {
-        // ১. লগইন চেক
-        const token = localStorage.getItem('token');
-        if (token) {
-            setIsLoggedIn(true);
-        } else {
-            setIsLoggedIn(false);
-        }
+        // ২. লগইন চেক
+        const token = typeof window !== "undefined" ? localStorage.getItem('token') : null;
+        setIsLoggedIn(Boolean(token));
 
-
+        // ৩. ব্রাউজারে লোড হওয়ার পর তারিখ সেট করুন
         const formattedDate = new Date().toLocaleDateString('bn-BD', {
             weekday: 'long',
             year: 'numeric',
@@ -32,8 +30,9 @@ const Hero = () => {
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="card lg:card-side bg-white w-full shadow-sm rounded-3xl border border-emerald-100">
 
-
+                        {/* বাম দিকের কন্টেন্ট */}
                         <div className="card-body justify-center p-8 lg:p-10 flex-1">
+                            {/* ৪. today স্টেটটি এখানে ব্যবহার করুন */}
                             <span className="badge badge-lg bg-emerald-100 text-emerald-800 border-none font-semibold w-fit">
                                 {today || "লোড হচ্ছে..."}
                             </span>
@@ -54,40 +53,39 @@ const Hero = () => {
                                 >
                                     সব পণ্য দেখুন
                                 </Link>
-                                <button className="btn bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg px-6 shadow-sm">
-                                    বাজার তুলনা
-                                </button>
                             </div>
                         </div>
 
-
+                        {/* ডান দিকের অংশ */}
                         <div className="p-6 lg:p-8 flex flex-col justify-center w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-gray-100">
 
                             {isLoggedIn ? (
+                                // লগইন থাকলে: স্ট্যাটস কার্ড দেখাবে
                                 <div className="flex flex-col gap-3">
                                     <div className="flex justify-between items-center bg-emerald-50/50 rounded-xl p-4 border border-emerald-100">
                                         <div>
                                             <p className="text-xs text-gray-500 mb-1">পণ্য</p>
                                             <p className="text-2xl font-bold text-emerald-700">৩৭</p>
                                         </div>
-                                        <p className="text-xs text-gray-500 max-w-[70px] text-right">টি নির্দিষ্ট পণ্য</p>
+                                        <p className="text-xs text-gray-500 max-w-17.5 text-right">টি নির্দিষ্ট পণ্য</p>
                                     </div>
                                     <div className="flex justify-between items-center bg-emerald-50/50 rounded-xl p-4 border border-emerald-100">
                                         <div>
                                             <p className="text-xs text-gray-500 mb-1">বাজার</p>
                                             <p className="text-2xl font-bold text-emerald-700">১২</p>
                                         </div>
-                                        <p className="text-xs text-gray-500 max-w-[70px] text-right">টি বাজার</p>
+                                        <p className="text-xs text-gray-500 max-w-17.5 text-right">টি বাজার</p>
                                     </div>
                                     <div className="flex justify-between items-center bg-emerald-50/50 rounded-xl p-4 border border-emerald-100">
                                         <div>
                                             <p className="text-xs text-gray-500 mb-1">বিভাগ</p>
                                             <p className="text-2xl font-bold text-emerald-700">৮</p>
                                         </div>
-                                        <p className="text-xs text-gray-500 max-w-[70px] text-right">টি বিভাগ</p>
+                                        <p className="text-xs text-gray-500 max-w-17.5 text-right">টি বিভাগ</p>
                                     </div>
                                 </div>
                             ) : (
+                                // লগইন না থাকলে: ঝুড়ির ছবি দেখাবে
                                 <div className="flex items-center justify-center h-full w-full">
                                     <Image
                                         src="/assets/bazar-hero.png"

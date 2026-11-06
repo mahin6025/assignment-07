@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
+import { cookies } from 'next/headers'; // <-- ১. cookies ইমপোর্ট করুন
+import { redirect } from 'next/navigation'; // <-- ২. redirect ইমপোর্ট করুন
 
 interface Market {
     market: string;
@@ -24,7 +26,6 @@ const toBengaliNumber = (num: number | string) => {
     return num.toString().replace(/\d/g, (d) => bengaliDigits[parseInt(d)]);
 };
 
-// ১. এখানে params await এবং ডেটা ফেচ হবে (Server Component)
 async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
     const productId = resolvedParams.id;
@@ -137,8 +138,17 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
     );
 }
 
-// ২. মূল পেজ (এখানে async নেই, শুধু Suspense আছে)
-export default function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+// ৩. মূল পেজ (এখানে async এবং কুকি চেক যুক্ত করা হলো)
+export default async function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    // কুকি থেকে সেশন টোকেন চেক করা হচ্ছে
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get('better-auth.session_token'); // আপনার কুকির নাম অনুযায়ী পরিবর্তন করুন
+
+    // যদি লগইন করা না থাকে, তবে সাইন-ইন পেজে রিডাইরেক্ট করবে
+    if (!sessionToken) {
+        redirect('/signin');
+    }
+
     return (
         <div className="max-w-7xl mx-auto p-4 md:p-8 font-sans bg-gray-50 min-h-screen">
             <Suspense fallback={
@@ -147,7 +157,6 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
                     <p className="text-lg text-gray-600">পণ্যের বিস্তারিত লোড হচ্ছে...</p>
                 </div>
             }>
-                {/* params টি সরাসরি পাস করে দেওয়া হলো */}
                 <ProductContent params={params} />
             </Suspense>
         </div>
