@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-    baseURL: "https://assignment-07-u5ex.vercel.app"
+    baseURL: process.env.NEXT_PUBLIC_APP_URL
 });
 
 

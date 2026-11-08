@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { cookies } from 'next/headers';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getProductById } from '@/lib/api';
 
@@ -29,15 +29,35 @@ const toBengaliNumber = (num: number | string) => {
 
 
 async function AuthCheck() {
-    const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('better-auth.session_token');
+    const headersList = await headers();
+    const cookie = headersList.get('cookie') || '';
 
-    if (!sessionToken) {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://assignment-07-u5ex.vercel.app';
+
+    try {
+        const res = await fetch(`${baseUrl}/api/auth/get-session`, {
+            headers: {
+                cookie: cookie,
+            },
+            cache: 'no-store',
+        });
+
+        if (!res.ok) {
+            redirect('/signin');
+        }
+
+        const session = await res.json();
+
+        if (!session || !session.user) {
+            redirect('/signin');
+        }
+    } catch (error) {
+        console.error('Session check failed:', error);
         redirect('/signin');
     }
+
     return null;
 }
-
 
 async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
@@ -145,12 +165,10 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
     );
 }
 
-
 async function ProductContentWrapper({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
     return <ProductContent params={Promise.resolve(resolvedParams)} />;
 }
-
 
 export default function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     return (
