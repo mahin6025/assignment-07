@@ -1,4 +1,5 @@
 import ProductCard, { Product } from './ProductCard';
+import { getAllProducts } from '@/lib/api';
 
 const Grid = ({ items }: { items: Product[] }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -9,17 +10,12 @@ const Grid = ({ items }: { items: Product[] }) => (
 );
 
 const ProductSections = async () => {
-    const res = await fetch('https://openapi.programming-hero.com/api/bazardor/products', {
-        cache: 'no-store',
-    });
-    const products: Product[] = await res.json();
-
+    const products: Product[] = await getAllProducts();
 
     const increased = products
         .filter((p) => p.change.dir === 'up')
         .sort((a, b) => b.change.pct - a.change.pct)
         .slice(0, 6);
-
 
     const decreased = products
         .filter((p) => p.change.dir === 'down')

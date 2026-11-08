@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { getProducts } from '@/lib/api';
 
 interface Product {
     id: number;
@@ -18,30 +19,24 @@ const toBengaliNumber = (num: number | string) => {
     return num.toString().replace(/\d/g, (d) => bengaliDigits[parseInt(d)]);
 };
 
-// ১. ডেটা ফেচ করার আলাদা কম্পোনেন্ট
+
 async function ProductGrid({ categorySlug }: { categorySlug: string }) {
     const validCategories = ['chal', 'dal', 'tel', 'sobji', 'mach'];
     if (!validCategories.includes(categorySlug)) {
         return <div className="text-center mt-10 text-xl text-gray-500">এই ক্যাটাগরির কোনো তথ্য পাওয়া যায়নি।</div>;
     }
 
-    const res = await fetch(`https://openapi.programming-hero.com/api/bazardor/products?category=${categorySlug}`);
 
-    // চেক করা হচ্ছে API রেসপন্স ঠিক আছে কিনা
-    if (!res.ok) {
-        return <div className="text-center mt-10 text-xl text-red-500">ডেটা লোড করতে সমস্যা হচ্ছে।</div>;
-    }
+    const products: Product[] = await getProducts(categorySlug);
 
-    const products: Product[] = await res.json();
 
-    // যদি ডেটা খালি আসে
     if (!products || products.length === 0) {
         return <div className="text-center mt-10 text-xl text-gray-500">এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি।</div>;
     }
 
     return (
         <>
-            {/* হেডার */}
+
             <div className="bg-white rounded-xl p-6 shadow-sm mb-6 flex items-center gap-4">
                 <span className="text-5xl bg-red-50 p-2 rounded-full">
                     {products[0].categoryIcon}
@@ -52,7 +47,7 @@ async function ProductGrid({ categorySlug }: { categorySlug: string }) {
                 </div>
             </div>
 
-            {/* প্রোডাক্ট গ্রিড */}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
                     <Link href={`/product/${product.id}`} key={product.id} className="block h-full">
@@ -92,13 +87,13 @@ async function ProductGrid({ categorySlug }: { categorySlug: string }) {
     );
 }
 
-// ২. Wrapper Component
+
 async function CategoryPageWrapper({ params }: { params: Promise<{ slug: string }> }) {
     const resolvedParams = await params;
     return <ProductGrid categorySlug={resolvedParams.slug} />;
 }
 
-// ৩. মূল পেজ
+
 export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
     return (
         <div className="max-w-7xl mx-auto p-4 md:p-8 font-sans bg-gray-50 min-h-screen">

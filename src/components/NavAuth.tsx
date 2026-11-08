@@ -12,19 +12,26 @@ const NavAuth = () => {
 
     if (isPending) return <div className="h-10 w-28" />;
 
-    // লগইন নেই
+
     if (!session) {
         return (
+
             <div className="flex items-center space-x-5">
+
+
                 <Link href="/signin" className="text-sm font-medium text-slate-800 hover:text-emerald-700">
                     সাইন ইন
                 </Link>
+
+
                 <Link
                     href="/signup"
                     className="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-md transition-colors"
                 >
                     সাইন আপ
                 </Link>
+
+
             </div>
         );
     }
@@ -45,6 +52,8 @@ const NavAuth = () => {
 
     return (
         <div className="dropdown dropdown-end">
+
+
             <div
                 tabIndex={0}
                 role="button"
@@ -60,10 +69,14 @@ const NavAuth = () => {
                         referrerPolicy="no-referrer"
                     />
                 ) : (
+
+
                     <span className="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center text-sm font-bold">
                         {name?.charAt(0).toUpperCase()}
                     </span>
+
                 )}
+
                 <span className="text-sm font-medium">{name?.split(' ')[0]}</span>
                 <span className="text-[10px]">▾</span>
             </div>

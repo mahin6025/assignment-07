@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# বাজার দর (BazarDor) 🛒
 
-## Getting Started
+## Short Description
 
-First, run the development server:
+**বাজার দর (BazarDor)** is a modern, responsive web application designed to help users track daily market prices of essential commodities in Bangladesh. Whether it's rice, lentils, vegetables, or fish, users can easily view today's prices, market-wise comparisons, and whether the price has increased or decreased. Built with Next.js and Tailwind CSS, it provides a seamless and fast experience for checking daily bazar rates.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used 🛠️
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project is built using the following modern web technologies:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework:** Next.js 14+ (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **UI Components:** DaisyUI
+- **Authentication:** Better Auth (with MongoDB)
+- **Database:** MongoDB
+- **Icons & Fonts:** Next/Font (Noto Serif Bengali), Emojis
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 5 Key Features of the Project 🌟
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1.  **Dynamic Category & Product Browsing:**
+    Users can browse through various categories (Rice, Dal, Oil, Vegetables, Fish, etc.) and view a comprehensive list of products with their current prices and today's price change percentage.
+2.  **Detailed Market-wise Price Breakdown:**
+    Clicking on any specific product takes the user to a detailed page showing a table of prices across different markets (e.g., Karwan Bazar, Mirpur, etc.), along with the minimum, maximum, and average prices.
+3.  **Secure Authentication & Protected Routes:**
+    Integrated with Better Auth (Google & GitHub login). Certain features, like viewing detailed product information, require the user to be signed in. Unauthenticated users are gracefully redirected to the sign-in page.
+4.  **Interactive Hero Section & Live Ticker:**
+    The homepage features a dynamic Hero section that displays stats (Products, Markets, Divisions) when logged in, and a fallback image when logged out. It also includes a scrolling ticker for quick price updates.
+5.  **Smart Sorting & Bengali Numerals:**
+    Users can sort products by price (Low to High, High to Low, or Default). The application correctly handles and displays all numbers in Bengali numerals (e.g., ১৪৮ টাকা) and sorts them based on their actual numeric value, not as strings.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## How to Run Locally 🚀
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Clone the repository: `git clone https://github.com/your-username/sabji-mandi.git`
+2. Install dependencies: `npm install`
+3. Set up environment variables in `.env` (MongoDB URI, Better Auth secrets, Google/GitHub keys).
+4. Run the development server: `npm run dev`
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+_Created as part of the Programming Hero Assignment._

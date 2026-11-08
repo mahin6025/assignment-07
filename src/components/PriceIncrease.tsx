@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-
+import { getAllProducts } from '@/lib/api';
 interface Product {
     id: number;
     nameBn: string;
@@ -20,14 +20,11 @@ const toBengaliNumber = (num: number) => {
 };
 
 export default function PriceIncrease() {
-
     const [products, setProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const res = await fetch('https://openapi.programming-hero.com/api/bazardor/products');
-            const data = await res.json();
-
+            const data = await getAllProducts();
 
             const increased = data.filter((p: Product) => p.change.dir === 'up').slice(0, 6);
             setProducts(increased);

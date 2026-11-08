@@ -9,12 +9,10 @@ export default function ProfilePage() {
     const router = useRouter();
     const { data: session, isPending } = authClient.useSession();
 
-    // null মানে ব্যবহারকারী এখনো কিছু লেখেনি, তখন session-এর নাম দেখাবে
     const [name, setName] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
 
-    // লগইন না থাকলে সাইন ইন পেজে পাঠায়
     useEffect(() => {
         if (!isPending && !session) router.push('/signin');
     }, [isPending, session, router]);

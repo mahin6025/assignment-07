@@ -18,7 +18,10 @@ const Navbar = async () => {
     return (
         <header className="w-full bg-white shadow-sm">
             <div className="flex justify-between items-center max-w-7xl mx-auto px-4 py-3">
+
                 <div className="flex items-center space-x-3">
+
+
                     <div className="w-10 h-10 bg-emerald-700 rounded-xl flex items-center justify-center p-1 shadow-md">
                         <Image
                             src="/assets/logo-icon.png"
@@ -28,15 +31,20 @@ const Navbar = async () => {
                         />
                     </div>
 
+
                     <div className="flex flex-col">
                         <span className="font-bold text-base leading-tight text-slate-900">বাজার দর</span>
                         <span className="text-xs text-slate-600">
                             <TodayDate />
                         </span>
                     </div>
+
+
                 </div>
 
                 <NavAuth />
+
+
             </div>
 
             <div className="w-full bg-emerald-50/50 border-t border-emerald-100">

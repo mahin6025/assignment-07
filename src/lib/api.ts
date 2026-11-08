@@ -1,12 +1,11 @@
-import { cacheLife } from 'next/cache';
+
+
+const BASE_URL = 'https://openapi.programming-hero.com/api/bazardor';
 
 
 export async function getCategories() {
-    'use cache';
-    cacheLife('hours');
 
-    const res = await fetch('https://openapi.programming-hero.com/api/bazardor/categories');
-
+    const res = await fetch(`${BASE_URL}/categories`, { cache: 'no-store' });
 
     if (!res.ok) {
         console.error('Failed to fetch categories');
@@ -18,15 +17,32 @@ export async function getCategories() {
 
 
 export async function getProducts(category: string) {
-    'use cache';
-    cacheLife('minutes');
+    const url = `${BASE_URL}/products?category=${category}`;
 
-    const url = `https://openapi.programming-hero.com/api/bazardor/products?category=${category}`;
 
-    const res = await fetch(url);
-
+    const res = await fetch(url, { cache: 'no-store' });
 
     if (!res.ok) return [];
+
+    return res.json();
+}
+
+
+export async function getAllProducts() {
+
+    const res = await fetch(`${BASE_URL}/products`, { cache: 'no-store' });
+
+    if (!res.ok) return [];
+
+    return res.json();
+}
+
+
+export async function getProductById(id: string) {
+
+    const res = await fetch(`${BASE_URL}/products/${id}`, { cache: 'no-store' });
+
+    if (!res.ok) return null;
 
     return res.json();
 }

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { getProductById } from '@/lib/api';
 
 interface Market {
     market: string;
@@ -30,13 +31,12 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
     const productId = resolvedParams.id;
 
-    const res = await fetch(`https://openapi.programming-hero.com/api/bazardor/products/${productId}`);
 
-    if (!res.ok) {
-        return <div className="text-center mt-10 text-xl text-red-600 font-bold">প্রোডাক্ট পাওয়া যায়নি!</div>;
+    const product: ProductDetails | null = await getProductById(productId);
+
+    if (!product) {
+        return <div className="text-center mt-10 text-xl text-red-600 font-bold">প্রোডাক্ট পাওয়া যায়নি!</div>;
     }
-
-    const product: ProductDetails = await res.json();
 
     const minPrice = Math.min(...product.markets.map(m => m.min));
     const maxPrice = Math.max(...product.markets.map(m => m.max));
@@ -45,7 +45,6 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
 
     return (
         <>
-            {/* ব্রেডক্রাম্ব */}
             <div className="text-sm text-gray-500 mb-4 flex flex-wrap gap-2 items-center">
                 <Link href="/" className="hover:text-emerald-700">হোম</Link>
                 <span>/</span>
@@ -56,7 +55,6 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
                 <span className="text-gray-800 font-medium">{product.nameBn}</span>
             </div>
 
-            {/* হেডার */}
             <div className="bg-white rounded-xl p-6 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="flex items-center gap-5">
                     <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center text-5xl">
@@ -82,7 +80,6 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
                 </div>
             </div>
 
-
             <div className="mb-6">
                 <h2 className="text-lg font-bold text-gray-800 mb-4">দামের সারসংক্ষেপ</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -97,13 +94,12 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
                         <p className="text-xs text-gray-400 mt-1">সবচেয়ে বেশি বাজার দর</p>
                     </div>
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                        <p className="text-gray-500 text-sm mb-1">গড় দাম</p>
+                        <p className="text-gray-500 text-sm mb-1">গড় দাম</p>
                         <p className="text-2xl font-bold text-emerald-700">{toBengaliNumber(avgPrice)} টাকা</p>
-                        <p className="text-xs text-gray-400 mt-1">দেশজুড়ে গড় বাজার দর</p>
+                        <p className="text-xs text-gray-400 mt-1">দেশজুড়ে গড় বাজার দর</p>
                     </div>
                 </div>
             </div>
-
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-100">
@@ -138,9 +134,7 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
     );
 }
 
-
 export default async function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-    // কুকি থেকে সেশন টোকেন চেক করা হচ্ছে
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get('better-auth.session_token');
 
